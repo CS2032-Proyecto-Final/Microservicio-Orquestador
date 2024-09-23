@@ -1,0 +1,125 @@
+openapi: 3.0.0
+info:
+  title: Orquestador API
+  description: API for managing orchestrated operations such as transfers and payments with promotions
+  version: 1.0.0
+
+paths:
+  /movimiento/transferencia/{remitente_id}:
+    post:
+      summary: Transferencia orquestada
+      parameters:
+        - name: remitente_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                destinatario_id:
+                  type: integer
+                monto:
+                  type: number
+                descripcion:
+                  type: string
+      responses:
+        '200':
+          description: Transferencia realizada con éxito
+        '404':
+          description: No existe usuario
+        '401':
+          description: No tienes suficiente saldo
+
+  /movimiento/pago/promocion/{id}:
+    post:
+      summary: Pago con promoción
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                persona_id:
+                  type: integer
+      responses:
+        '200':
+          description: Pago con promoción realizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  codigo:
+                    type: string
+        '401':
+          description: No hay saldo o promoción fuera de vigencia
+        '404':
+          description: No hay tienda o promoción no encontrada
+
+  /promociones:
+    get:
+      summary: Obtener todas las promociones ordenadas por día
+      responses:
+        '200':
+          description: Lista de promociones obtenida con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    nombre_tienda:
+                      type: string
+                    nombre_producto:
+                      type: string
+                    descuento:
+                      type: number
+                    precio:
+                      type: number
+
+  /promocion/{id}:
+    get:
+      summary: Obtener detalles de una promoción
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detalles de promoción obtenidos con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nombre_tienda:
+                    type: string
+                  nombre_producto:
+                    type: string
+                  descuento:
+                    type: number
+                  precio:
+                    type: number
+                  descripcion:
+                    type: string
+                  dia_inicial:
+                    type: string
+                  dia_final:
+                    type: string
