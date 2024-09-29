@@ -3,7 +3,7 @@
 import http from 'http';
 import express from 'express';
 import cors from 'cors';
-import { postMovimiento, postPagoPromocion } from 'controller/OrquestadorController';
+import { postMovimiento, postPagoPromocion } from './controller/OrquestadorController';
 
 const app = express();
 

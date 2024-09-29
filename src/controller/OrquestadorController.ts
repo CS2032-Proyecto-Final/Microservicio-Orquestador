@@ -1,7 +1,7 @@
 import { diasDto, pagoDto, transferenciaDTO } from 'dtos';
 import express from 'express';
 
-import { fetchSaldo, getPromocion, getPromocionDias, postPago, postTransferencias, putCliente } from 'server/api';
+import { fetchSaldo, getPromocion, getPromocionDias, postPago, postTransferencias, putCliente } from '../server/api';
 
 
 
