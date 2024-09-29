@@ -25,7 +25,6 @@ export const postTransferencias = async( data: transferenciaDTO): Promise<void> 
     try {
         await axios.post(MM_URL+'/transferencias', data)
 
-
     } catch (error) {
         console.error(error);
     }
@@ -65,14 +64,35 @@ export const getPromocionDias = async (promocion_id: number): Promise<diasDto | 
     }
 };
 
-export const postPago = async ( data: pagoDto): Promise<void> => {
+export const postPago = async ( data: pagoDto): Promise<number> => {
     try {
-        await axios.post(MM_URL+'/pagos', data);
+        const codigo = await axios.post(MM_URL+'/pagos', data);
+        return codigo.data;
     } catch (error){
         console.error();
     }
 }
 
+export const getDestinatarioId = async ( destinatario_numero : number): Promise<number> => {
+    try {
+        const response = await axios.get(`${MC_URL}/persona/telefono/${destinatario_numero}`)
+        return response.data;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
+export const getPromocionPago = async (promocion_id :number ) => {
+    try {
+        const response = await axios.get(`${MP_URL}/promocion/${promocion_id}/pago`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+    }
+
+
+}
 
 
 

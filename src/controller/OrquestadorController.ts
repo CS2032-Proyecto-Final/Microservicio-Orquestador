@@ -1,8 +1,7 @@
 import { diasDto, pagoDto, transferenciaDTO } from 'dtos';
 import express from 'express';
 
-import { fetchSaldo, getPromocion, getPromocionDias, postPago, postTransferencias, putCliente } from '../server/api';
-
+import { fetchSaldo, getDestinatarioId, getPromocion, getPromocionDias, getPromocionPago, postPago, postTransferencias, putCliente } from '../server/api';
 
 
 export const postMovimiento = async (req: express.Request, res: express.Response) => {
@@ -11,20 +10,22 @@ export const postMovimiento = async (req: express.Request, res: express.Response
 
         const { destinatario_numero, monto, descripcion } = req.body;
 
-        const data: transferenciaDTO = {
-            remitente_id, 
-            destinatario_numero,
-            monto,
-            descripcion
-        };
-
-        const saldo_remitente = await fetchSaldo(data.remitente_id);
+        const saldo_remitente = await fetchSaldo(remitente_id);
         
         if (saldo_remitente < monto) {
             res.status(400).json({
                 message: "Saldo insuficiente"
             })
         } 
+        
+        const destinatario_id = await getDestinatarioId(destinatario_numero);
+
+        const data: transferenciaDTO = {
+            remitente_id, 
+            destinatario_id,
+            monto,
+            descripcion
+        };
 
         await postTransferencias(data);
 
@@ -45,36 +46,43 @@ export const postMovimiento = async (req: express.Request, res: express.Response
 };
 
 export const postPagoPromocion = async (req: express.Request, res: express.Response) => {
-
     try {
+        let codigo;
         const promocion_id = parseInt(req.params.id);
 
-        const { remitente_id, destinatario_numero, monto, descripcion, codigo  } = req.body;
+        const { remitente_id} = req.body;
 
-        const data: pagoDto  = {
-            remitente_id, 
-            destinatario_numero,
-            monto, 
-            descripcion, 
-            codigo
+        const data = await getPromocionPago(promocion_id);
+
+        const saldo_remitente = await fetchSaldo(remitente_id);
+
+        const currentDate = new Date();
+
+        const monto = data.precio - data.precio * data.descuento / 100;
+        if (data.dia_final && currentDate.getTime() > data.dia_final.getTime()) {
+            res.status(404).json({
+                message: "La promocion está vencida",
+            });
+        } else if (saldo_remitente < monto) {
+            res.status(404).json({
+                message: "El saldo es insuficiente"
+            }) 
+        } else {
+            const pago: pagoDto = {
+                remitente_id: remitente_id,
+                destinatario_id: data.tienda_id,
+                monto: monto,
+                producto_id: data.producto_id
+            }
+            const transferencia: transferenciaDTO = {
+                remitente_id: remitente_id,
+                destinatario_id: data.tienda_id,
+                monto: monto,
+            }
+            codigo = await postPago(pago);
+            await putCliente(transferencia);
         }
-        const put : transferenciaDTO = {
-            remitente_id, 
-            destinatario_numero, 
-            monto,
-            descripcion
-        }
-
-        const tienda_id = await getPromocion(promocion_id);
-
-        const saldo = await fetchSaldo(remitente_id);
-
-        const dias: diasDto = await getPromocionDias(promocion_id);
-        
-        await postPago(data);
-
-        await putCliente(put);
-
+        return codigo;
     }
     catch {
 
