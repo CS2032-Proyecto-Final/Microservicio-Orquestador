@@ -19,5 +19,5 @@ server.listen(8001, () => {
     console.log('Server running on http://localhost:8001/')
 })
 
-app.post('/movimiento/:remitente_id', postMovimiento);
-app.post('/movimiento/pago/promocion/:promocion_id', postPagoPromocion)
+app.post('/movimiento/transferencia/:remitente_id', postMovimiento);
+app.post('/movimiento/pago/promocion/:promocion_id', postPagoPromocion);
