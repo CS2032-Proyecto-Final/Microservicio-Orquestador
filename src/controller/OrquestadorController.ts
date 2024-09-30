@@ -6,7 +6,7 @@ import { fetchSaldo, getDestinatarioId, getPromocion, getPromocionDias, getPromo
 
 export const postMovimiento = async (req: express.Request, res: express.Response) => {
     try {
-        const remitente_id = parseInt(req.params.remitente_numero);
+        const remitente_id = parseInt(req.params.remitente_id);
 
         const { destinatario_numero, monto, descripcion } = req.body;
 
