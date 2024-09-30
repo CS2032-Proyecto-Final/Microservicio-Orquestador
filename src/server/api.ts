@@ -14,7 +14,7 @@ export const fetchSaldo = async (remitente_id: number): Promise<number | undefin
             }
         });
 
-        return res.data.saldo_remitente; 
+        return res.data.saldo_remitente;
     } catch (error) {
         console.error("Error fetching saldo:", error);
         return undefined; 
@@ -22,6 +22,7 @@ export const fetchSaldo = async (remitente_id: number): Promise<number | undefin
 };
 
 export const postTransferencias = async( data: transferenciaDTO): Promise<void> => {
+    console.log(data);
     try {
         await axios.post(MM_URL+'/transferencias', data)
 
@@ -76,7 +77,7 @@ export const postPago = async ( data: pagoDto): Promise<number> => {
 export const getDestinatarioId = async ( destinatario_numero : number): Promise<number> => {
     try {
         const response = await axios.get(`${MC_URL}/persona/telefono/${destinatario_numero}`)
-        return response.data;
+        return response.data.id;
     } catch (error) {
         console.error(error);
     }

@@ -48,18 +48,20 @@ export const postMovimiento = async (req: express.Request, res: express.Response
 export const postPagoPromocion = async (req: express.Request, res: express.Response) => {
     try {
         let codigo;
-        const promocion_id = parseInt(req.params.id);
+        const promocion_id = parseInt(req.params.promocion_id);
 
-        const { remitente_id} = req.body;
-
+        const {remitente_id} = req.body;
         const data = await getPromocionPago(promocion_id);
-
+        
         const saldo_remitente = await fetchSaldo(remitente_id);
 
         const currentDate = new Date();
 
         const monto = data.precio - data.precio * data.descuento / 100;
-        if (data.dia_final && currentDate.getTime() > data.dia_final.getTime()) {
+        
+        const diaFinalDate = new Date(data.dia_final);
+
+        if (data.dia_final && currentDate.getTime() > diaFinalDate.getTime()) {
             res.status(404).json({
                 message: "La promocion está vencida",
             });
@@ -79,12 +81,17 @@ export const postPagoPromocion = async (req: express.Request, res: express.Respo
                 destinatario_id: data.tienda_id,
                 monto: monto,
             }
-            codigo = await postPago(pago);
+            await postPago(pago);
             await putCliente(transferencia);
         }
-        return codigo;
+        res.status(200).json({
+            message: "Pago hecho successfully"
+        });
     }
-    catch {
-
-    }    
+    catch (error) {
+        res.status(500).json({
+            message: "Error creating pago",
+            error: error.message
+        });
+    }
 }
