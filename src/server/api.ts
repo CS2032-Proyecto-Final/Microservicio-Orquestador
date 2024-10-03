@@ -22,7 +22,6 @@ export const fetchSaldo = async (remitente_id: number): Promise<number | undefin
 };
 
 export const postTransferencias = async( data: transferenciaDTO): Promise<void> => {
-    console.log(data);
     try {
         await axios.post(MM_URL+'/transferencias', data)
 
@@ -34,6 +33,16 @@ export const postTransferencias = async( data: transferenciaDTO): Promise<void> 
 export const putCliente = async (data: transferenciaDTO): Promise<void> => {
     try {
         await axios.put(`${MC_URL}/cliente/${data.remitente_id}/monto`, data);
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
+export const putCliente2 = async (data: transferenciaDTO, id: number): Promise<void> => {
+    try {
+        await axios.put(`${MC_URL}/cliente/${id}/monto`, data);
 
     } catch (error) {
         console.error(error);
