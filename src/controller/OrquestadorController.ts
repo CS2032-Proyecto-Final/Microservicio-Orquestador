@@ -48,7 +48,8 @@ export const postMovimiento = async (req: express.Request, res: express.Response
 export const postPagoPromocion = async (req: express.Request, res: express.Response) => {
     try {
         let codigo;
-        const promocion_id = parseInt(req.params.id);
+        const promocion_id = parseInt(req.params.promocion_id);
+        console.log(req.params)
 
         const { remitente_id} = req.body;
 
