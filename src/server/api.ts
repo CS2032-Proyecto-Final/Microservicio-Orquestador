@@ -2,9 +2,9 @@ import axios from 'axios';
 
 import { diasDto, pagoDto, transferenciaDTO } from '../dtos';
 
-const MP_URL: string = "";
-const MM_URL: string = "";
-const MC_URL: string = "";
+const MP_URL: string = "http://localhost:8002";
+const MM_URL: string = "http://localhost:8000";
+const MC_URL: string = "http://localhost:8080";
 
 export const fetchSaldo = async (remitente_id: number): Promise<number | undefined> => {
     try {
@@ -14,7 +14,7 @@ export const fetchSaldo = async (remitente_id: number): Promise<number | undefin
             }
         });
 
-        return res.data.saldo_remitente; 
+        return res.data.saldo_remitente;
     } catch (error) {
         console.error("Error fetching saldo:", error);
         return undefined; 
@@ -33,6 +33,16 @@ export const postTransferencias = async( data: transferenciaDTO): Promise<void> 
 export const putCliente = async (data: transferenciaDTO): Promise<void> => {
     try {
         await axios.put(`${MC_URL}/cliente/${data.remitente_id}/monto`, data);
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
+export const putCliente2 = async (data: transferenciaDTO, id: number): Promise<void> => {
+    try {
+        await axios.put(`${MC_URL}/cliente/${id}/monto`, data);
 
     } catch (error) {
         console.error(error);
@@ -76,7 +86,7 @@ export const postPago = async ( data: pagoDto): Promise<number> => {
 export const getDestinatarioId = async ( destinatario_numero : number): Promise<number> => {
     try {
         const response = await axios.get(`${MC_URL}/persona/telefono/${destinatario_numero}`)
-        return response.data;
+        return response.data.id;
     } catch (error) {
         console.error(error);
     }
