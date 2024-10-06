@@ -2,9 +2,9 @@ import axios from 'axios';
 
 import { diasDto, pagoDto, transferenciaDTO } from '../dtos';
 
-const MP_URL: string = "http://localhost:8002";
-const MM_URL: string = "http://localhost:8000";
-const MC_URL: string = "http://localhost:8080";
+const MP_URL: string = "http://mp-c:8002";
+const MM_URL: string = "http://mm-c:8000";
+const MC_URL: string = "http://mc-c:8080";
 
 export const fetchSaldo = async (remitente_id: number): Promise<number | undefined> => {
     try {
